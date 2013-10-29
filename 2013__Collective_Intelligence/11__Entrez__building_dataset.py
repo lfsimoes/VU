@@ -33,7 +33,8 @@ Entrez.email = "ADD YOUR EMAIL ADDRESS!"
 import cPickle, bz2
 import os
 
-pickle_protocol = 2			# data format used in Python object serialization
+# data format used in Python object serialization
+pickle_protocol = 2
 
 # <headingcell level=2>
 
@@ -82,22 +83,22 @@ Ids_file = search_term + '__Ids.pkl.bz2'
 if os.path.exists( Ids_file ):
     Ids = cPickle.load( bz2.BZ2File( Ids_file, 'rb' ) )
 else:
-	# determine the number of hits for the search term
-	search = Entrez.read( Entrez.esearch( db="pubmed", term=search_term+'[TIAB]', retmax=0 ) )
-	total = int( search['Count'] )
-	
-	# `Ids` will be incrementally assembled, by performing multiple queries,
-	# each returning at most `retrieve_per_query` entries.
-	Ids = []
-	retrieve_per_query = 10000
-	
-	for start in xrange( 0, total, retrieve_per_query ):
-		print 'Fetching IDs of results [%d,%d]' % ( start, start+retrieve_per_query )
-		s = Entrez.read( Entrez.esearch( db="pubmed", term=search_term+'[TIAB]', retstart=start, retmax=retrieve_per_query ) )
-		Ids.extend( s[ u'IdList' ] )
-	
-	# Save list of Ids
-	cPickle.dump( Ids, bz2.BZ2File( Ids_file, 'wb' ), protocol=pickle_protocol )
+    # determine the number of hits for the search term
+    search = Entrez.read( Entrez.esearch( db="pubmed", term=search_term+'[TIAB]', retmax=0 ) )
+    total = int( search['Count'] )
+    
+    # `Ids` will be incrementally assembled, by performing multiple queries,
+    # each returning at most `retrieve_per_query` entries.
+    Ids = []
+    retrieve_per_query = 10000
+    
+    for start in xrange( 0, total, retrieve_per_query ):
+        print 'Fetching IDs of results [%d,%d]' % ( start, start+retrieve_per_query )
+        s = Entrez.read( Entrez.esearch( db="pubmed", term=search_term+'[TIAB]', retstart=start, retmax=retrieve_per_query ) )
+        Ids.extend( s[ u'IdList' ] )
+    
+    # Save list of Ids
+    cPickle.dump( Ids, bz2.BZ2File( Ids_file, 'wb' ), protocol=pickle_protocol )
     
 total = len( Ids )
 print '%d documents contain the search term "%s".' % ( total, search_term )
@@ -133,9 +134,9 @@ example_search
 example_paper = Entrez.read( Entrez.esummary(db="pubmed", id='23144668') )[0]
 
 def print_summary( p ):
-	for k,v in p.items():
-		print k
-		print '\t',v
+    for k,v in p.items():
+        print k
+        print '\t',v
 
 print_summary(example_paper)
 
@@ -166,27 +167,27 @@ Summaries_file = search_term + '__Summaries.pkl.bz2'
 if os.path.exists( Summaries_file ):
     Summaries = cPickle.load( bz2.BZ2File( Summaries_file, 'rb' ) )
 else:
-	# `Summaries` will be incrementally assembled, by performing multiple queries,
-	# each returning at most `retrieve_per_query` entries.
-	Summaries = []
-	retrieve_per_query = 200
-	
-	print 'Fetching Summaries of results: ',
-	for start in xrange( 0, len(Ids), retrieve_per_query ):
-		print start,
-		s = Entrez.read( Entrez.esummary( db="pubmed", id=','.join(Ids[start:start+retrieve_per_query]) ) )
-		
-		# out of the retrieved data, we will keep only a tuple (title, authors, year, DOI), associated with the paper's id.
-		f = [
-			( p['Id'], ( p['Title'], p['AuthorList'], p['PubDate'][:4], p.get('DOI', '') ) )
-			for p in s
-			]
-		Summaries.extend( f )
-	print
-	
-	# Save Summaries, as a dictionary indexed by Ids
-	Summaries = dict(Summaries)
-	cPickle.dump( Summaries, bz2.BZ2File( Summaries_file, 'wb' ), protocol=pickle_protocol )
+    # `Summaries` will be incrementally assembled, by performing multiple queries,
+    # each returning at most `retrieve_per_query` entries.
+    Summaries = []
+    retrieve_per_query = 200
+    
+    print 'Fetching Summaries of results: ',
+    for start in xrange( 0, len(Ids), retrieve_per_query ):
+        print start,
+        s = Entrez.read( Entrez.esummary( db="pubmed", id=','.join(Ids[start:start+retrieve_per_query]) ) )
+        
+        # out of the retrieved data, we will keep only a tuple (title, authors, year, DOI), associated with the paper's id.
+        f = [
+            ( p['Id'], ( p['Title'], p['AuthorList'], p['PubDate'][:4], p.get('DOI', '') ) )
+            for p in s
+            ]
+        Summaries.extend( f )
+    print
+    
+    # Save Summaries, as a dictionary indexed by Ids
+    Summaries = dict(Summaries)
+    cPickle.dump( Summaries, bz2.BZ2File( Summaries_file, 'wb' ), protocol=pickle_protocol )
 
 # <markdowncell>
 
