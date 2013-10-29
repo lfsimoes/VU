@@ -144,7 +144,7 @@ print_summary(example_paper)
 
 # For now, we'll keep just some basic information for each paper: title, list of authors, publication year, and [DOI](https://en.wikipedia.org/wiki/Digital_object_identifier).
 # 
-# In case you are not familiar with the DOI system, know that the paper above can be accessed through the link http://dx.doi.org/10.1007/s12065-012-0071-x (which is `http://dx.doi.org/` followed by the paper's DOI).
+# In case you are not familiar with the DOI system, know that the paper above can be accessed through the link [http://dx.doi.org/10.1007/s12065-012-0071-x](http://dx.doi.org/10.1007/s12065-012-0071-x) (which is `http://dx.doi.org/` followed by the paper's DOI).
 
 # <codecell>
 
