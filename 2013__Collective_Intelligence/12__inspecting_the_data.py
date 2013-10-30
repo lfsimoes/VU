@@ -182,6 +182,82 @@ title_words = Counter([
 # <codecell>
 
 print len(title_words), 'distinct words occur in the paper titles.\n'
-print '30 most frequently occurring words:'
-print sorted( title_words.items(), key=lambda i:i[1] )[-30:]
+print '50 most frequently occurring words:'
+print sorted( title_words.items(), key=lambda i:i[1] )[-50:]
+
+# <headingcell level=3>
+
+# Tracing the evolution of research topics
+
+# <markdowncell>
+
+# We will be measuring here how often did certain keywords occur in paper titles across different years.
+# Remember though, that we are dealing with a biased dataset: we will be measuring frequencies of keywords among titles that were already preselected (for occurrence of "evolution" in their titles or abstracts).
+
+# <markdowncell>
+
+# Grouping paper titles by publication year, while discarding papers published before 1950 (using [collections.defaultdict](http://docs.python.org/2/library/collections.html#collections.defaultdict)):
+
+# <codecell>
+
+from collections import defaultdict
+
+# `papers_per_year` will be a dictionary indexing year to titles of papers published in that year.
+# As a defaultdict (of lists), actions on non-existing keys cause them to be added to the dictionary, with an empty list as value.
+papers_per_year = defaultdict(list)
+
+for p in Summaries.itervalues():
+    if int(p.year) >= 1950:
+        papers_per_year[ int(p.year) ].append( p.title )
+
+years = sorted( papers_per_year.keys() )
+
+# <markdowncell>
+
+# Checking the outcome: first 5 paper titles in 1950
+
+# <codecell>
+
+papers_per_year[1950][:5]
+
+# <markdowncell>
+
+# Measuring fraction of papers in each year having the different keywords in their titles.<br>
+# Beware that the way we are doing things here, a keyword like 'gene' matches also things like 'genetics', or even 'genealogy'.
+
+# <codecell>
+
+keywords = ['DNA', 'gene', 'genom', 'simulation', 'model']
+#keywords = ['disease', 'virus', 'cancer', 'HIV']
+#keywords = ['adaptation', 'speciation', 'extinction', 'mutation', 'variation']
+
+keywords_per_year = {}
+
+for kw in keywords:
+    keywords_per_year[kw] = [
+        sum([ 1 for title in papers_per_year[y] if kw in title ]) / float(len(papers_per_year[y]))
+        for y in years
+        ]
+
+# <markdowncell>
+
+# Listing a keyword's usage over a period of time:
+
+# <codecell>
+
+keywords_per_year['gene'][ years.index(2005) : years.index(2013)+1 ]
+
+# <markdowncell>
+
+# Creating a plot to visualize the results (using [matplotlib.pyplot.plot](http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.plot)):
+
+# <codecell>
+
+for kw in keywords:
+    plt.plot( years, keywords_per_year[kw], label=kw )
+
+plt.legend( loc='upper left', frameon=False )
+plt.xlabel('year')
+plt.ylabel('fraction of papers with keyword in title')
+plt.xlim(1950,2013);
 
