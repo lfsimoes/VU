@@ -7,7 +7,7 @@
 
 # <markdowncell>
 
-# [Luís F. Simões](mailto:luis.simoes@vu.nl), 2013-10-29<br><br><br>
+# [Luís F. Simões](mailto:luis.simoes@vu.nl), 2013-10-30<br><br><br>
 
 # <markdowncell>
 
@@ -28,7 +28,7 @@ Summaries_file = search_term + '__Summaries.pkl.bz2'
 
 import cPickle, bz2
 
-Ids = cPickle.load( bz2.BZ2File( Ids_file, 'rb' ) )
+#Ids = cPickle.load( bz2.BZ2File( Ids_file, 'rb' ) )
 Summaries = cPickle.load( bz2.BZ2File( Summaries_file, 'rb' ) )
 
 # <markdowncell>
@@ -41,10 +41,8 @@ from collections import namedtuple
 
 paper = namedtuple( 'paper', ['title', 'authors', 'year', 'doi'] )
 
-Summaries = {
-    id : paper( *paper_info )
-    for (id, paper_info) in Summaries.iteritems()
-    }
+for (id, paper_info) in Summaries.iteritems():
+    Summaries[id] = paper( *paper_info )
 
 # <codecell>
 
@@ -108,6 +106,10 @@ nr_papers = [ count for (y,count) in papers_per_year ]
 
 print 'Number of papers in the dataset published since 1950: %d.' % sum(nr_papers)
 
+# <markdowncell>
+
+# Creating a bar plot to visualize the results (using [matplotlib.pyplot.bar](http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.bar)):
+
 # <codecell>
 
 plt.bar( left=years, height=nr_papers, width=1.0 )
@@ -141,6 +143,10 @@ print 'There are %d authors in the dataset with distinct names.\n' % len(nr_pape
 print '15 authors with greatest number of papers:'
 print sorted( nr_papers_by_author.items(), key=lambda i:i[1] )[-15:]
 
+# <markdowncell>
+
+# Creating a histogram to visualize the results (using [matplotlib.pyplot.hist](http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.hist)):
+
 # <codecell>
 
 plt.hist( x=nr_papers_by_author.values(), bins=range(51), histtype='step' )
@@ -170,7 +176,7 @@ title_words = Counter([
     ( word if word[-1]!='.' else word[:-1] ).lower()
     for paper in Summaries.itervalues()
     for word in paper.title.split(' ')
-    if word != ''
+    if word != ''     # the split by spaces generates empty strings when consecutive spaces occur in the title; this discards them
     ])
 
 # <codecell>
