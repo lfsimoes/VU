@@ -7,7 +7,8 @@
 
 # <markdowncell>
 
-# [Luís F. Simões](mailto:luis.simoes@vu.nl), 2013-11-01<br><br><br>
+# [Luís F. Simões](mailto:luis.simoes@vu.nl)<br>
+# 2013-10-29 (*updated: 2013-11-01*)<br><br><br>
 
 # <markdowncell>
 
@@ -267,7 +268,9 @@ plt.xlim(1950,2013);
 
 # <markdowncell>
 
-# `Summaries` maps paper ids to paper summaries. Let us start by building a mapping from authors, to ids of papers they authored:
+# `Summaries` maps paper *ids* to paper *summaries*. Let us now create here mappings by different criteria.
+# 
+# We'll start by building a mapping from *authors*, to *ids* of papers they authored:
 
 # <codecell>
 
@@ -287,17 +290,19 @@ papers_of_author['Eiben AE']
 
 # <markdowncell>
 
-# From the `papers_of_author` mapping, we will now build a mapping from authors, to the set of co-authors they have published with:
+# We now build a mapping from *authors*, to the set of *co-authors* they have published with (using Python's [sets](http://docs.python.org/2/library/stdtypes.html#set-types-set-frozenset)):
 
 # <codecell>
 
 coauthors = defaultdict(set)
 
-for a,pids in papers_of_author.iteritems():
-    for id in pids:
-        for ca in Summaries[id].authors:
-            if ca != a:
-                coauthors[ a ].add( ca )
+for p in Summaries.itervalues():
+    for a in p.authors:
+        coauthors[ a ].update( p.authors )
+
+# the code above results in each author being listed as having co-autored with himself. We now remove such references here
+for a,ca in coauthors.iteritems():
+    ca.remove( a )
 
 # <codecell>
 
@@ -305,11 +310,11 @@ coauthors['Eiben AE']
 
 # <markdowncell>
 
-# With this data in hand, we can now plot the distribution showing the number of collaborators a scientist has published with in its full publication record:
+# With this data in hand, we can plot the distribution showing the number of collaborators a scientist has published with in its full publication record:
 
 # <codecell>
 
-plt.hist( x=[ len(ca) for ca in coauthors.itervalues() ], bins=range(52), histtype='bar', align='left', normed=True )
+plt.hist( x=[ len(ca) for ca in coauthors.itervalues() ], bins=range(55), histtype='bar', align='left', normed=True )
 plt.xlabel('number of collaborators')
 plt.ylabel('fraction of scientists')
 plt.xlim(0,50);
