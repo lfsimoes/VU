@@ -7,7 +7,7 @@
 
 # <markdowncell>
 
-# [Luís F. Simões](mailto:luis.simoes@vu.nl), 2013-10-30<br><br><br>
+# [Luís F. Simões](mailto:luis.simoes@vu.nl), 2013-11-01<br><br><br>
 
 # <markdowncell>
 
@@ -260,4 +260,57 @@ plt.legend( loc='upper left', frameon=False )
 plt.xlabel('year')
 plt.ylabel('fraction of papers with keyword in title')
 plt.xlim(1950,2013);
+
+# <headingcell level=3>
+
+# *Authored*, and *Coauthors* mappings
+
+# <markdowncell>
+
+# `Summaries` maps paper ids to paper summaries. Let us start by building a mapping from authors, to ids of papers they authored:
+
+# <codecell>
+
+papers_of_author = defaultdict(list)
+
+for id,p in Summaries.iteritems():
+    for a in p.authors:
+        papers_of_author[ a ].append( id )
+
+# <codecell>
+
+papers_of_author['Eiben AE']
+
+# <codecell>
+
+{ pid : Summaries[pid] for pid in papers_of_author['Eiben AE'] }
+
+# <markdowncell>
+
+# From the `papers_of_author` mapping, we will now build a mapping from authors, to the set of co-authors they have published with:
+
+# <codecell>
+
+coauthors = defaultdict(set)
+
+for a,pids in papers_of_author.iteritems():
+    for id in pids:
+        for ca in Summaries[id].authors:
+            if ca != a:
+                coauthors[ a ].add( ca )
+
+# <codecell>
+
+coauthors['Eiben AE']
+
+# <markdowncell>
+
+# With this data in hand, we can now plot the distribution showing the number of collaborators a scientist has published with in its full publication record:
+
+# <codecell>
+
+plt.hist( x=[ len(ca) for ca in coauthors.itervalues() ], bins=range(52), histtype='bar', align='left', normed=True )
+plt.xlabel('number of collaborators')
+plt.ylabel('fraction of scientists')
+plt.xlim(0,50);
 
