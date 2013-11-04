@@ -8,7 +8,7 @@
 # <markdowncell>
 
 # [Luís F. Simões](mailto:luis.simoes@vu.nl)<br>
-# 2013-10-29 (*updated: 2013-11-01*)<br><br><br>
+# 2013-10-29 (*updated: 2013-11-02*)<br><br><br>
 
 # <markdowncell>
 
@@ -47,11 +47,11 @@ for (id, paper_info) in Summaries.iteritems():
 
 # <codecell>
 
-Summaries['23144668']
+Summaries[23144668]
 
 # <codecell>
 
-Summaries['23144668'].title
+Summaries[23144668].title
 
 # <headingcell level=2>
 
@@ -82,7 +82,7 @@ plt.rcParams['savefig.dpi'] = 100
 
 # <codecell>
 
-paper_year = [ int(p.year) for p in Summaries.itervalues() ]
+paper_year = [ p.year for p in Summaries.itervalues() ]
 
 from collections import Counter
 
@@ -141,8 +141,8 @@ nr_papers_by_author = Counter( authors_expanded )
 # <codecell>
 
 print 'There are %d authors in the dataset with distinct names.\n' % len(nr_papers_by_author)
-print '15 authors with greatest number of papers:'
-print sorted( nr_papers_by_author.items(), key=lambda i:i[1] )[-15:]
+print '50 authors with greatest number of papers:'
+print sorted( nr_papers_by_author.items(), key=lambda i:i[1] )[-50:]
 
 # <markdowncell>
 
@@ -208,8 +208,8 @@ from collections import defaultdict
 papers_per_year = defaultdict(list)
 
 for p in Summaries.itervalues():
-    if int(p.year) >= 1950:
-        papers_per_year[ int(p.year) ].append( p.title )
+    if p.year >= 1950:
+        papers_per_year[ p.year ].append( p.title )
 
 years = sorted( papers_per_year.keys() )
 
@@ -306,7 +306,7 @@ for a,ca in coauthors.iteritems():
 
 # <codecell>
 
-coauthors['Eiben AE']
+print ', '.join( coauthors['Eiben AE'] )
 
 # <markdowncell>
 

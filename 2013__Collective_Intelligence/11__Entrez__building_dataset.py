@@ -7,7 +7,8 @@
 
 # <markdowncell>
 
-# [Luís F. Simões](mailto:luis.simoes@vu.nl), 2013-10-29<br><br><br>
+# [Luís F. Simões](mailto:luis.simoes@vu.nl)<br>
+# 2013-10-29 (*updated: 2013-11-02*)<br><br><br>
 
 # <markdowncell>
 
@@ -21,7 +22,7 @@
 from Bio import Entrez
 
 # NCBI requires you to set your email address to make use of NCBI's E-utilities
-Entrez.email = "ADD YOUR EMAIL ADDRESS!"
+Entrez.email = "Your.Name.Here@example.org"
 
 # <markdowncell>
 
@@ -42,7 +43,9 @@ pickle_protocol = 2
 
 # <markdowncell>
 
+# <div style="float: right">
 # `Entrez.einfo()`: [Biopython Tutorial](http://biopython.org/DIST/docs/tutorial/Tutorial.html#htoc111), [module documentation](http://biopython.org/DIST/docs/api/Bio.Entrez-module.html#einfo), [NCBI's E-utilities reference](http://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.EInfo).
+# </div>
 
 # <codecell>
 
@@ -66,11 +69,44 @@ search_fields
 
 # <markdowncell>
 
+# <div style="float: right">
 # `Entrez.esearch()`: [Biopython Tutorial](http://biopython.org/DIST/docs/tutorial/Tutorial.html#htoc112), [module documentation](http://biopython.org/DIST/docs/api/Bio.Entrez-module.html#esearch), [NCBI's E-utilities reference](http://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.ESearch).
+# </div>
 
 # <markdowncell>
 
-# We will assemble a dataset comprised of research articles containing the keyword "evolution", in either its title or abstract.
+# To have a look at the kind of data we get when searching the database, we'll perform a search for papers authored by Haasdijk:
+
+# <codecell>
+
+example_authors = ['Haasdijk E']
+example_search = Entrez.read( Entrez.esearch( db="pubmed", term=' AND '.join([a+'[AUTH]' for a in example_authors]) ) )
+example_search
+
+# <markdowncell>
+
+# Note how the result being produced is not in Python's native string format:
+
+# <codecell>
+
+type( example_search['IdList'][0] )
+
+# <markdowncell>
+
+# The part of the query's result we are most interested in is accessible through
+
+# <codecell>
+
+example_ids = [ int(id) for id in example_search['IdList'] ]
+print example_ids
+
+# <headingcell level=3>
+
+# PubMed IDs dataset
+
+# <markdowncell>
+
+# We will now assemble a dataset comprised of research articles containing the keyword "evolution", in either their titles or abstracts.
 
 # <codecell>
 
@@ -89,13 +125,20 @@ else:
     
     # `Ids` will be incrementally assembled, by performing multiple queries,
     # each returning at most `retrieve_per_query` entries.
-    Ids = []
+    Ids_str = []
     retrieve_per_query = 10000
     
     for start in xrange( 0, total, retrieve_per_query ):
         print 'Fetching IDs of results [%d,%d]' % ( start, start+retrieve_per_query )
         s = Entrez.read( Entrez.esearch( db="pubmed", term=search_term+'[TIAB]', retstart=start, retmax=retrieve_per_query ) )
-        Ids.extend( s[ u'IdList' ] )
+        Ids_str.extend( s[ u'IdList' ] )
+    
+    # convert Ids to integers (and ensure that the conversion is reversible)
+    Ids = [ int(id) for id in Ids_str ]
+    
+    for (id_str, id_int) in zip(Ids_str, Ids):
+        if str(id_int) != id_str:
+            raise Exception('Conversion of PubMed ID %s from string to integer it not reversible.' % id_str )
     
     # Save list of Ids
     cPickle.dump( Ids, bz2.BZ2File( Ids_file, 'wb' ), protocol=pickle_protocol )
@@ -117,17 +160,13 @@ Ids[:5]
 
 # <markdowncell>
 
+# <div style="float: right">
 # `Entrez.esummary()`: [Biopython Tutorial](http://biopython.org/DIST/docs/tutorial/Tutorial.html#htoc114), [module documentation](http://biopython.org/DIST/docs/api/Bio.Entrez-module.html#esummary), [NCBI's E-utilities reference](http://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.ESummary).
+# </div>
 
 # <markdowncell>
 
-# To have a look at the kind of metadata we get when searching the database, we'll now search for papers authored by Haasdijk, and then fetch the summary for one of them:
-
-# <codecell>
-
-example_authors = ['Haasdijk E']
-example_search = Entrez.read( Entrez.esearch( db="pubmed", term=' AND '.join([a+'[AUTH]' for a in example_authors]) ) )
-example_search
+# To have a look at the kind of metadata we get from a call to `Entrez.esummary()`, we now fetch the summary of one of Haasdijk's papers (using one of the PubMed IDs we obtained in the [previous section](#ESearch:-Searching-the-Entrez-databases)):
 
 # <codecell>
 
@@ -148,7 +187,7 @@ print_summary(example_paper)
 
 # <codecell>
 
-( example_paper['Title'], example_paper['AuthorList'], example_paper['PubDate'][:4], example_paper['DOI'] )
+( example_paper['Title'], example_paper['AuthorList'], int(example_paper['PubDate'][:4]), example_paper['DOI'] )
 
 # <headingcell level=3>
 
@@ -157,6 +196,21 @@ print_summary(example_paper)
 # <markdowncell>
 
 # We are now ready to assemble a dataset containing the summaries of all the paper `Ids` we previously fetched.
+# 
+# To reduce the memory footprint, and to ensure the saved datasets won't depend on Biopython being installed to be properly loaded, values returned by `Entrez.read()` will be converted to their corresponding native Python types. We start by defining a function for helping with the conversion of strings:
+
+# <codecell>
+
+def conv_str( s ):
+    """
+    The Entrez parser returns strings as either instances of
+    `Bio.Entrez.Parser.StringElement` (a subclass of `str`),
+    or `Bio.Entrez.Parser.UnicodeElement` (a subclass of `unicode`).
+    Such strings are here converted to Python's native formats.
+    
+    See: http://biopython.org/DIST/docs/api/Bio.Entrez.Parser-pysrc.html
+    """
+    return unicode(s) if isinstance(s, unicode) else str(s)
 
 # <codecell>
 
@@ -175,27 +229,37 @@ else:
     print 'Fetching Summaries of results: ',
     for start in xrange( 0, len(Ids), retrieve_per_query ):
         print start,
-        s = Entrez.read( Entrez.esummary( db="pubmed", id=','.join(Ids[start:start+retrieve_per_query]) ) )
+        
+        # build comma separated string with the ids at indexes [start, start+retrieve_per_query)
+        query_ids = ','.join( [ str(id) for id in Ids[ start : start+retrieve_per_query ] ] )
+        
+        s = Entrez.read( Entrez.esummary( db="pubmed", id=query_ids ) )
         
         # out of the retrieved data, we will keep only a tuple (title, authors, year, DOI), associated with the paper's id.
+        # (all values converted to native Python formats)
         f = [
-            ( p['Id'], ( p['Title'], p['AuthorList'], p['PubDate'][:4], p.get('DOI', '') ) )
+            ( int( p['Id'] ), (
+                conv_str( p['Title'] ),
+                [ conv_str(a) for a in p['AuthorList'] ],
+                int( p['PubDate'][:4] ),                # keeps just the publication year
+                conv_str( p.get('DOI', '') )            # papers for which no DOI is available get an empty string in their place
+                ) )
             for p in s
             ]
         Summaries.extend( f )
-    print
     
     # Save Summaries, as a dictionary indexed by Ids
-    Summaries = dict(Summaries)
+    Summaries = dict( Summaries )
+    
     cPickle.dump( Summaries, bz2.BZ2File( Summaries_file, 'wb' ), protocol=pickle_protocol )
 
 # <markdowncell>
 
-# Let us take a look at the first 5 retrieved summaries:
+# Let us take a look at the first 3 retrieved summaries:
 
 # <codecell>
 
-{ id : Summaries[id] for id in Ids[:5] }
+{ id : Summaries[id] for id in Ids[:3] }
 
 # <headingcell level=2>
 
