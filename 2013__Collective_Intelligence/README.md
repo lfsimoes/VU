@@ -8,7 +8,7 @@ This folder contains the code for generating the datasets used in the *Collectiv
 course (FEW_X_401047_2013_120), along with examples of their usage.
 
 The course uses the book 
-"Programming Collective Intelligence: Building Smart Web 2.0 Applications", by Toby Segaran (O'Reilly Media, 2007).
+"[Programming Collective Intelligence: Building Smart Web 2.0 Applications][CI_book]", by Toby Segaran (O'Reilly Media, 2007).
 
 The provided datasets are meant to be used in implementations of the theory covered in the chapters on
 "Making Recommendations" (Ch. 2), "Discovering Groups" (Ch. 3), "Searching and Ranking" (Ch. 4),
@@ -28,3 +28,5 @@ The links below visualize the the IPython Notebooks contained in this folder thr
 [Notebook_11]: http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/11__Entrez__building_dataset.ipynb
 [Notebook_12]: http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/12__inspecting_the_data.ipynb
 [Notebook_13]: http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/13__network_analysis.ipynb
+
+[CI_book]: http://shop.oreilly.com/product/9780596529321.do
