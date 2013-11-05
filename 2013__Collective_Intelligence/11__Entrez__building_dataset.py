@@ -8,7 +8,9 @@
 # <markdowncell>
 
 # [Luís F. Simões](mailto:luis.simoes@vu.nl)<br>
-# 2013-10-29 (*updated: 2013-11-02*)<br><br><br>
+# 2013-10-29 *(updated: 2013-11-05)*<div style="float: right"><pre>Notebooks: [next >](http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/12__inspecting_the_data.ipynb) &bull; [index &uarr;](https://github.com/lfsimoes/VU/tree/master/2013__Collective_Intelligence)</pre></div><br><br>
+# 
+# *******
 
 # <markdowncell>
 
@@ -111,6 +113,8 @@ print example_ids
 # <codecell>
 
 search_term = 'evolution'
+
+# <codecell>
 
 Ids_file = search_term + '__Ids.pkl.bz2'
 
@@ -260,6 +264,183 @@ else:
 # <codecell>
 
 { id : Summaries[id] for id in Ids[:3] }
+
+# <headingcell level=2>
+
+# ELink: Searching for related items in NCBI Entrez
+
+# <markdowncell>
+
+# <div style="float: right">
+# `Entrez.elink()`: [Biopython Tutorial](http://biopython.org/DIST/docs/tutorial/Tutorial.html#htoc134), [module documentation](http://biopython.org/DIST/docs/api/Bio.Entrez-module.html#elink), [NCBI's E-utilities reference](http://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.ELink).
+# </div>
+
+# <markdowncell>
+
+# To understand how to obtain paper citations with Entrez, we will first assemble a small set of PubMed IDs, and then query for their citations.
+# To that end, we search here for papers published by [Chris Adami](http://adamilab.msu.edu/) in the [PLOS Computational Biology](http://www.ploscompbiol.org/) journal (as before, having also the word "evolution" in either the title or abstract):
+
+# <codecell>
+
+CA_search_term = search_term+'[TIAB] AND Adami C[AUTH] AND PLoS computational biology[JOUR]'
+CA_ids = Entrez.read( Entrez.esearch( db="pubmed", term=CA_search_term ) )['IdList']
+CA_ids
+
+# <codecell>
+
+CA_summ = {
+    p['Id'] : ( p['Title'], p['AuthorList'], p['PubDate'][:4], p['FullJournalName'], p.get('DOI', '') )
+    for p in Entrez.read( Entrez.esummary(db="pubmed", id=','.join( CA_ids )) )
+    }
+CA_summ
+
+# <markdowncell>
+
+# Because we restricted our search to papers in an open-access journal, you then follow their DOIs to freely access their PDFs at the journal's website: [10.1371/journal.pcbi.0040023](http://dx.doi.org/10.1371/journal.pcbi.0040023), [10.1371/journal.pcbi.1000948](http://dx.doi.org/10.1371/journal.pcbi.1000948), [10.1371/journal.pcbi.1002236](http://dx.doi.org/10.1371/journal.pcbi.1002236).
+
+# <markdowncell>
+
+# We will now issue calls to `Entrez.elink()` using these PubMed IDs, to retrieve the IDs of papers that cite them.
+# The database from which the IDs will be retrieved is [PubMed Central](http://www.ncbi.nlm.nih.gov/pmc/), a free digital database of full-text scientific literature in the biomedical and life sciences.
+# 
+# You can, for instance, find [archived here](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2951343/), with the PubMed Central ID 2951343, the paper "Critical dynamics in the evolution of stochastic strategies for the iterated prisoner's dilemma", which as we saw above, has the PubMed ID 20949101.
+# 
+# A complete list of the kinds of links you can retrieve with `Entrez.elink()` can be found [here](http://eutils.ncbi.nlm.nih.gov/entrez/query/static/entrezlinks.html).
+
+# <codecell>
+
+CA_citing = {
+    id : Entrez.read( Entrez.elink(
+            cmd = "neighbor",               # ELink command mode: "neighbor", returns
+                                            #     a set of UIDs in `db` linked to the input UIDs in `dbfrom`.
+            dbfrom = "pubmed",              # Database containing the input UIDs: PubMed
+            db = "pmc",                     # Database from which to retrieve UIDs: PubMed Central
+            LinkName = "pubmed_pmc_refs",   # Name of the Entrez link to retrieve: "pubmed_pmc_refs", gets
+                                            #     "Full-text articles in the PubMed Central Database that cite the current articles"
+            from_uid = id                   # input UIDs
+            ) )
+    for id in CA_ids
+    }
+
+CA_citing['20949101']
+
+# <markdowncell>
+
+# We have in `CA_citing[paper_id][0]['LinkSetDb'][0]['Link']` the list of papers citing `paper_id`. To get it as just a list of ids, we can do
+
+# <codecell>
+
+cits = [ l['Id'] for l in CA_citing['20949101'][0]['LinkSetDb'][0]['Link'] ]
+cits
+
+# <markdowncell>
+
+# However, one more step is needed, as what we have now are PubMed Central IDs, and not PubMed IDs. Their conversion can be achieved through an additional call to `Entrez.elink()`:
+
+# <codecell>
+
+cits_pm = Entrez.read( Entrez.elink( dbfrom="pmc", db="pubmed", LinkName="pmc_pubmed", from_uid=",".join(cits)) )
+cits_pm
+
+# <codecell>
+
+ids_map = { pmc_id : link['Id'] for (pmc_id,link) in zip(cits_pm[0]['IdList'], cits_pm[0]['LinkSetDb'][0]['Link']) }
+ids_map
+
+# <markdowncell>
+
+# And to check that indeed these are the PubMed IDs of papers citing the paper "Critical dynamics in the evolution of stochastic strategies for the iterated prisoner's dilemma", you can match PubMed Central's [list of citations for this paper](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2951343/citedby/) against the following results from a query to PubMed for their summaries:
+
+# <codecell>
+
+{   p['Id'] : ( p['Title'], p['AuthorList'], p['PubDate'][:4], p['FullJournalName'], p.get('DOI', '') )
+    for p in Entrez.read( Entrez.esummary(db="pubmed", id=','.join( ids_map.values() )) )
+    }
+
+# <markdowncell>
+
+# For comparison, you can match these with Google Scholar's [list of citations](http://scholar.google.com/scholar?cites=13285237943045850451) for the same paper.
+
+# <headingcell level=3>
+
+# Citations dataset
+
+# <markdowncell>
+
+# We have now seen all the steps required to assemble a dataset of citations to each of the papers in our dataset.
+
+# <codecell>
+
+Citations_file = search_term + '__Citations.pkl.bz2'
+Citations = []
+
+# <markdowncell>
+
+# At least one server query will be issued per paper in `Ids`. Because NCBI allows for at most 3 queries per second (see [here](http://biopython.org/DIST/docs/api/Bio.Entrez-pysrc.html#_open)), this dataset will take a long time to assemble. Should you need to interrupt it for some reason, or the connection fail at some point, it is safe to just rerun the cell below until all data is collected.
+
+# <codecell>
+
+import httplib
+
+if Citations == [] and os.path.exists( Citations_file ):
+    Citations = cPickle.load( bz2.BZ2File( Citations_file, 'rb' ) )
+
+if len(Citations) < len(Ids):
+    
+    i = len(Citations)
+    checkpoint = len(Ids) / 10 + 1      # save to hard drive at every 10% of Ids fetched
+    
+    for pm_id in Ids[i:]:               # either starts from index 0, or resumes from where we previously left off
+        
+        while True:
+            try:
+                # query for papers archived in PubMed Central that cite the paper with PubMed ID `pm_id`
+                c = Entrez.read( Entrez.elink( dbfrom = "pubmed", db="pmc", LinkName = "pubmed_pmc_refs", id=str(pm_id) ) )
+                
+                c = c[0]['LinkSetDb']
+                if len(c) == 0:
+                    # no citations found for the current paper
+                    c = []
+                else:
+                    c = [ l['Id'] for l in c[0]['Link'] ]
+                    
+                    # convert citations from PubMed Central IDs to PubMed IDs
+                    p = []
+                    for start in xrange( 0, len(c), 200 ):
+                        query_ids = ','.join( c[start : start+200] )
+                        r = Entrez.read( Entrez.elink( dbfrom="pmc", db="pubmed", LinkName="pmc_pubmed", from_uid=query_ids ) )
+                        # select the IDs. If no matching PubMed ID was found, [] is returned instead
+                        p.extend( [] if r[0]['LinkSetDb']==[] else [ int(link['Id']) for link in r[0]['LinkSetDb'][0]['Link'] ] )
+                    c = p
+            
+            except httplib.BadStatusLine:
+                # Presumably, the server closed the connection before sending a valid response. Retry until we have the data.
+                print 'r',
+                continue
+            break
+        
+        Citations.append( (pm_id, c) )
+        i += 1
+        print '\r at %.3f %%' % (100. * i/len(Ids)),
+        
+        if i % checkpoint == 0:
+            print '\tsaving at checkpoint', i
+            cPickle.dump( Citations, bz2.BZ2File( Citations_file, 'wb' ), protocol=pickle_protocol )
+    
+    print '\n done.'
+    
+    # Save Citations, as a dictionary indexed by Ids
+    Citations = dict( Citations )
+    
+    cPickle.dump( Citations, bz2.BZ2File( Citations_file, 'wb' ), protocol=pickle_protocol )
+
+# <markdowncell>
+
+# To see that we have indeed obtained the data we expected, you can match the ids below (citations to the paper "Critical dynamics in the evolution of stochastic strategies for the iterated prisoner's dilemma"), with the ids listed at the end of last section.
+
+# <codecell>
+
+Citations[20949101]
 
 # <headingcell level=2>
 
