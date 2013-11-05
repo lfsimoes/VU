@@ -296,7 +296,7 @@ CA_summ
 
 # <markdowncell>
 
-# Because we restricted our search to papers in an open-access journal, you then follow their DOIs to freely access their PDFs at the journal's website: [10.1371/journal.pcbi.0040023](http://dx.doi.org/10.1371/journal.pcbi.0040023), [10.1371/journal.pcbi.1000948](http://dx.doi.org/10.1371/journal.pcbi.1000948), [10.1371/journal.pcbi.1002236](http://dx.doi.org/10.1371/journal.pcbi.1002236).
+# Because we restricted our search to papers in an open-access journal, you can then follow their DOIs to freely access their PDFs at the journal's website:<br>[10.1371/journal.pcbi.0040023](http://dx.doi.org/10.1371/journal.pcbi.0040023), [10.1371/journal.pcbi.1000948](http://dx.doi.org/10.1371/journal.pcbi.1000948), [10.1371/journal.pcbi.1002236](http://dx.doi.org/10.1371/journal.pcbi.1002236).
 
 # <markdowncell>
 
