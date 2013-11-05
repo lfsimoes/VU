@@ -8,7 +8,7 @@
 # <markdowncell>
 
 # [Luís F. Simões](mailto:luis.simoes@vu.nl)<br>
-# 2013-10-29 *(updated: 2013-11-05)*<div style="float: right"><pre>Notebooks: [next >](http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/12__inspecting_the_data.ipynb) &bull; [index &uarr;](https://github.com/lfsimoes/VU/tree/master/2013__Collective_Intelligence)</pre></div><br><br>
+# 2013-10-29 *(updated: 2013-11-05)*<div style="float: right">`Notebooks:` [next &rarr;](http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/12__inspecting_the_data.ipynb) &bull; [index &uarr;](https://github.com/lfsimoes/VU/tree/master/2013__Collective_Intelligence)</div><br><br>
 # 
 # *******
 
@@ -47,7 +47,7 @@ pickle_protocol = 2
 
 # <div style="float: right">
 # `Entrez.einfo()`: [Biopython Tutorial](http://biopython.org/DIST/docs/tutorial/Tutorial.html#htoc111), [module documentation](http://biopython.org/DIST/docs/api/Bio.Entrez-module.html#einfo), [NCBI's E-utilities reference](http://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.EInfo).
-# </div>
+# </div><br><br>
 
 # <codecell>
 
@@ -73,7 +73,7 @@ search_fields
 
 # <div style="float: right">
 # `Entrez.esearch()`: [Biopython Tutorial](http://biopython.org/DIST/docs/tutorial/Tutorial.html#htoc112), [module documentation](http://biopython.org/DIST/docs/api/Bio.Entrez-module.html#esearch), [NCBI's E-utilities reference](http://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.ESearch).
-# </div>
+# </div><br><br>
 
 # <markdowncell>
 
@@ -166,7 +166,7 @@ Ids[:5]
 
 # <div style="float: right">
 # `Entrez.esummary()`: [Biopython Tutorial](http://biopython.org/DIST/docs/tutorial/Tutorial.html#htoc114), [module documentation](http://biopython.org/DIST/docs/api/Bio.Entrez-module.html#esummary), [NCBI's E-utilities reference](http://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.ESummary).
-# </div>
+# </div><br><br>
 
 # <markdowncell>
 
@@ -273,7 +273,7 @@ else:
 
 # <div style="float: right">
 # `Entrez.elink()`: [Biopython Tutorial](http://biopython.org/DIST/docs/tutorial/Tutorial.html#htoc134), [module documentation](http://biopython.org/DIST/docs/api/Bio.Entrez-module.html#elink), [NCBI's E-utilities reference](http://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.ELink).
-# </div>
+# </div><br><br>
 
 # <markdowncell>
 
