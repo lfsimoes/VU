@@ -8,7 +8,9 @@
 # <markdowncell>
 
 # [Luís F. Simões](mailto:luis.simoes@vu.nl)<br>
-# 2013-10-29 (*updated: 2013-11-02*)<br><br><br>
+# 2013-10-29 *(updated: 2013-11-02)*<div style="float: right">`Notebooks:` [&larr; previous](http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/11__Entrez__building_dataset.ipynb) &bull; [next &rarr;](http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/13__network_analysis.ipynb) &bull; [index &uarr;](https://github.com/lfsimoes/VU/tree/master/2013__Collective_Intelligence)</div><br><br>
+# 
+# *******
 
 # <markdowncell>
 
@@ -261,61 +263,4 @@ plt.legend( loc='upper left', frameon=False )
 plt.xlabel('year')
 plt.ylabel('fraction of papers with keyword in title')
 plt.xlim(1950,2013);
-
-# <headingcell level=3>
-
-# *Authored*, and *Coauthors* mappings
-
-# <markdowncell>
-
-# `Summaries` maps paper *ids* to paper *summaries*. Let us now create here mappings by different criteria.
-# 
-# We'll start by building a mapping from *authors*, to *ids* of papers they authored:
-
-# <codecell>
-
-papers_of_author = defaultdict(list)
-
-for id,p in Summaries.iteritems():
-    for a in p.authors:
-        papers_of_author[ a ].append( id )
-
-# <codecell>
-
-papers_of_author['Eiben AE']
-
-# <codecell>
-
-{ pid : Summaries[pid] for pid in papers_of_author['Eiben AE'] }
-
-# <markdowncell>
-
-# We now build a mapping from *authors*, to the set of *co-authors* they have published with (using Python's [sets](http://docs.python.org/2/library/stdtypes.html#set-types-set-frozenset)):
-
-# <codecell>
-
-coauthors = defaultdict(set)
-
-for p in Summaries.itervalues():
-    for a in p.authors:
-        coauthors[ a ].update( p.authors )
-
-# the code above results in each author being listed as having co-autored with himself. We now remove such references here
-for a,ca in coauthors.iteritems():
-    ca.remove( a )
-
-# <codecell>
-
-print ', '.join( coauthors['Eiben AE'] )
-
-# <markdowncell>
-
-# With this data in hand, we can plot the distribution showing the number of collaborators a scientist has published with in its full publication record:
-
-# <codecell>
-
-plt.hist( x=[ len(ca) for ca in coauthors.itervalues() ], bins=range(55), histtype='bar', align='left', normed=True )
-plt.xlabel('number of collaborators')
-plt.ylabel('fraction of scientists')
-plt.xlim(0,50);
 
