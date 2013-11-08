@@ -8,7 +8,7 @@
 # <markdowncell>
 
 # [Luís F. Simões](mailto:luis.simoes@vu.nl)<br>
-# 2013-11-08<div style="float: right">`Notebooks:` [previous &larr;](http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/13__network_analysis.ipynbb) &bull; [index &uarr;](https://github.com/lfsimoes/VU/tree/master/2013__Collective_Intelligence)</div><br><br>
+# 2013-11-08<div style="float: right">`Notebooks:` [previous &larr;](http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/13__network_analysis.ipynb) &bull; [index &uarr;](https://github.com/lfsimoes/VU/tree/master/2013__Collective_Intelligence)</div><br><br>
 # 
 # *******
 

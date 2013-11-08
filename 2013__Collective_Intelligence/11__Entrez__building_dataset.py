@@ -268,7 +268,7 @@ else:
 
 # <markdowncell>
 
-# You can find examples of how to use this data in the "[inspecting the data](http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/12__inspecting_the_data.ipynb)" notebook.
+# You can find examples of how to use this data in the "[inspecting the dataset](http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/12__inspecting_the_data.ipynb)" notebook.
 
 # <headingcell level=2>
 
@@ -616,7 +616,7 @@ Citations[20949101]
 
 # <markdowncell>
 
-# You can find examples of how to use this data in the "[network analysis](http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/13__network_analysis.ipynbb)" notebook.
+# You can find examples of how to use this data in the "[network analysis](http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/13__network_analysis.ipynb)" notebook.
 
 # <headingcell level=2>
 
