@@ -8,7 +8,7 @@
 # <markdowncell>
 
 # [Luís F. Simões](mailto:luis.simoes@vu.nl)<br>
-# 2013-10-29 *(updated: 2013-11-05)*<div style="float: right">`Notebooks:` [next &rarr;](http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/12__inspecting_the_data.ipynb) &bull; [index &uarr;](https://github.com/lfsimoes/VU/tree/master/2013__Collective_Intelligence)</div><br><br>
+# 2013-10-29 *(updated: 2013-11-08)*<div style="float: right">`Notebooks:` [next &rarr;](http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/12__inspecting_the_data.ipynb) &bull; [index &uarr;](https://github.com/lfsimoes/VU/tree/master/2013__Collective_Intelligence)</div><br><br>
 # 
 # *******
 
@@ -24,7 +24,8 @@
 from Bio import Entrez
 
 # NCBI requires you to set your email address to make use of NCBI's E-utilities
-Entrez.email = "Your.Name.Here@example.org"
+#Entrez.email = "Your.Name.Here@example.org"
+Entrez.email = "luis.simoes@vu.nl"
 
 # <markdowncell>
 
@@ -176,12 +177,12 @@ Ids[:5]
 
 example_paper = Entrez.read( Entrez.esummary(db="pubmed", id='23144668') )[0]
 
-def print_summary( p ):
+def print_dict( p ):
     for k,v in p.items():
         print k
         print '\t',v
 
-print_summary(example_paper)
+print_dict(example_paper)
 
 # <markdowncell>
 
@@ -264,6 +265,177 @@ else:
 # <codecell>
 
 { id : Summaries[id] for id in Ids[:3] }
+
+# <markdowncell>
+
+# You can find examples of how to use this data in the "[inspecting the data](http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/12__inspecting_the_data.ipynb)" notebook.
+
+# <headingcell level=2>
+
+# EFetch: Downloading full records from Entrez
+
+# <markdowncell>
+
+# <div style="float: right">
+# `Entrez.efetch()`: [Biopython Tutorial](http://biopython.org/DIST/docs/tutorial/Tutorial.html#htoc115), [module documentation](http://biopython.org/DIST/docs/api/Bio.Entrez-module.html#efetch), [NCBI's E-utilities reference](http://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.EFetch).
+# </div><br><br>
+
+# <markdowncell>
+
+# `Entrez.efetch()` is the function that will allow us to obtain paper abstracts. Let us start by taking a look at the kind of data it returns when we query PubMed's database (see in [this table](http://www.ncbi.nlm.nih.gov/books/NBK25499/table/chapter4.chapter4_table1/?report=objectonly) the the databases, data formats, and record views you can access through `Entrez.efetch()`).
+
+# <codecell>
+
+q = Entrez.read( Entrez.efetch(db="pubmed", id='23144668', retmode="xml") )
+
+# <markdowncell>
+
+# `q` is a list, with each member corresponding to a queried id. Because here we only queried for one id, its results are then in `q[0]`.
+
+# <codecell>
+
+type(q), len(q)
+
+# <markdowncell>
+
+# At `q[0]` we find a dictionary containing two keys, the contents of which we print below.
+
+# <codecell>
+
+type(q[0]), q[0].keys()
+
+# <codecell>
+
+print_dict( q[0][ 'PubmedData' ] )
+
+# <markdowncell>
+
+# The key `'MedlineCitation'` maps into another dictionary. In that dictionary, most of the information is contained under the key `'Article'`. To minimize the clutter, below we show the contents of `'MedlineCitation'` excluding its `'Article'` member, and below that we then show the contents of `'Article'`.
+
+# <codecell>
+
+print_dict( { k:v for k,v in q[0][ 'MedlineCitation' ].iteritems() if k!='Article' } )
+
+# <codecell>
+
+print_dict( q[0][ 'MedlineCitation' ][ 'Article' ] )
+
+# <markdowncell>
+
+# A paper's abstract can therefore be accessed with:
+
+# <codecell>
+
+{ int(q[0]['MedlineCitation']['PMID']) : str(q[0]['MedlineCitation']['Article']['Abstract']['AbstractText'][0]) }
+
+# <markdowncell>
+
+# A paper for which no abstract is available will simply not contain the `'Abstract'` key in its `'Article'` dictionary:
+
+# <codecell>
+
+print_dict( Entrez.read( Entrez.efetch(db="pubmed", id='17782550', retmode="xml") )[0]['MedlineCitation']['Article'] )
+
+# <markdowncell>
+
+# Some of the ids in our dataset refer to books from the [NCBI Bookshelf](http://www.ncbi.nlm.nih.gov/books/), a collection of freely available, downloadable, on-line versions of selected biomedical books. For such ids, `Entrez.efetch()` returns a slightly different structure, where the keys `[u'BookDocument', u'PubmedBookData']` take the place of the `[u'MedlineCitation', u'PubmedData']` keys we saw above.
+# 
+# Here is an example of the data we obtain for the id corresponding to the book [The Social Biology of Microbial Communities](http://www.ncbi.nlm.nih.gov/books/NBK114831/):
+
+# <codecell>
+
+r = Entrez.read( Entrez.efetch(db="pubmed", id='24027805', retmode="xml") )
+
+# <codecell>
+
+print_dict( r[0][ 'PubmedBookData' ] )
+
+# <codecell>
+
+print_dict( r[0][ 'BookDocument' ] )
+
+# <markdowncell>
+
+# In a book from the NCBI Bookshelf, its abstract can then be accessed as such:
+
+# <codecell>
+
+{ int(r[0]['BookDocument']['PMID']) : conv_str(r[0]['BookDocument']['Abstract']['AbstractText'][0]) }
+
+# <headingcell level=3>
+
+# Abstracts dataset
+
+# <markdowncell>
+
+# We can now assemble a dataset mapping paper ids to their abstracts.
+
+# <codecell>
+
+Abstracts_file = search_term + '__Abstracts.pkl.bz2'
+
+# <codecell>
+
+import httplib
+from collections import deque
+
+if os.path.exists( Abstracts_file ):
+    Abstracts = cPickle.load( bz2.BZ2File( Abstracts_file, 'rb' ) )
+else:
+    # `Abstracts` will be incrementally assembled, by performing multiple queries,
+    # each returning at most `retrieve_per_query` entries.
+    Abstracts = deque()
+    retrieve_per_query = 200
+    
+    print 'Fetching Abstracts of results: ',
+    for start in xrange( 0, len(Ids), retrieve_per_query ):
+        print start,
+        
+        # build comma separated string with the ids at indexes [start, start+retrieve_per_query)
+        query_ids = ','.join( [ str(id) for id in Ids[ start : start+retrieve_per_query ] ] )
+        
+        # issue requests to the server, until we get the full amount of data we expect
+        while True:
+            try:
+                s = Entrez.read( Entrez.efetch(db="pubmed", id=query_ids, retmode="xml" ) )
+            except httplib.IncompleteRead:
+                print 'r',
+                continue
+            break
+        
+        i = 0
+        for p in s:
+            abstr = ''
+            if 'MedlineCitation' in p:
+                pmid = p['MedlineCitation']['PMID']
+                if 'Abstract' in p['MedlineCitation']['Article']:
+                    abstr = p['MedlineCitation']['Article']['Abstract']['AbstractText'][0]
+            elif 'BookDocument' in p:
+                pmid = p['BookDocument']['PMID']
+                if 'Abstract' in p['BookDocument']:
+                    abstr = p['BookDocument']['Abstract']['AbstractText'][0]
+            else:
+                raise Exception('Unrecognized record type, for id %d (keys: %s)' % (Ids[start+i], str(p.keys())) )
+            
+            Abstracts.append( (int(pmid), conv_str(abstr)) )
+            i += 1
+    
+    # Save Abstracts, as a dictionary indexed by Ids
+    Abstracts = dict( Abstracts )
+    
+    cPickle.dump( Abstracts, bz2.BZ2File( Abstracts_file, 'wb' ), protocol=pickle_protocol )
+
+# <markdowncell>
+
+# Taking a look at one paper's abstract:
+
+# <codecell>
+
+Abstracts[ 11237011 ]
+
+# <markdowncell>
+
+# You can find examples of how to use this data in the "[text mining](http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/14__text_mining.ipynb)" notebook.
 
 # <headingcell level=2>
 
@@ -441,6 +613,10 @@ if len(Citations) < len(Ids):
 # <codecell>
 
 Citations[20949101]
+
+# <markdowncell>
+
+# You can find examples of how to use this data in the "[network analysis](http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/13__network_analysis.ipynbb)" notebook.
 
 # <headingcell level=2>
 

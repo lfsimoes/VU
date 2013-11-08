@@ -8,7 +8,7 @@
 # <markdowncell>
 
 # [Luís F. Simões](mailto:luis.simoes@vu.nl)<br>
-# 2013-11-06 *(updated: 2013-11-07)*<div style="float: right">`Notebooks:` [&larr; previous](http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/12__inspecting_the_data.ipynb) &bull; [index &uarr;](https://github.com/lfsimoes/VU/tree/master/2013__Collective_Intelligence)</div><br><br>
+# 2013-11-06 *(updated: 2013-11-07)*<div style="float: right">`Notebooks:` [&larr; previous](http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/12__inspecting_the_data.ipynb) &bull; [next &rarr;](http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/14__text_mining.ipynb) &bull; [index &uarr;](https://github.com/lfsimoes/VU/tree/master/2013__Collective_Intelligence)</div><br><br>
 # 
 # *******
 
@@ -454,7 +454,7 @@ plt.xlim(0,20);
 
 # <headingcell level=2>
 
-# The Six Degrees of Robert Axelrod
+# The Six Degrees of Axelrod
 
 # <markdowncell>
 
