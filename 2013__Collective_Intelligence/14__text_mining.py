@@ -345,7 +345,7 @@ def word_cloud( word_frequencies, max_words=250, cutoff_percentile=90, font_size
     
     wc = HTML( ' '.join(
         '<span style="font-size:%.1fpx;">&nbsp;%s&nbsp;</span>' % ( min_fs + f*(max_fs - min_fs), w )
-        for w,f in zip(words[:max_words], freq[:max_words])
+        for w,f in zip(words[:max_words], freq)
         ) )
     display(wc)
 

@@ -24,8 +24,7 @@
 from Bio import Entrez
 
 # NCBI requires you to set your email address to make use of NCBI's E-utilities
-#Entrez.email = "Your.Name.Here@example.org"
-Entrez.email = "luis.simoes@vu.nl"
+Entrez.email = "Your.Name.Here@example.org"
 
 # <markdowncell>
 
