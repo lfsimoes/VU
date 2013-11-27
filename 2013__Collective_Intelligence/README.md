@@ -25,10 +25,14 @@ The links below visualize the the IPython Notebooks contained in this folder thr
 3. [Network analysis][Notebook_13]
 4. [Text mining][Notebook_14]
 
+An extra dataset, containing papers' keywords, was also provided, as a form of ground truth of paper categorization.
+It's construction used the code in the [Extra__Keywords][Notebook_KW] notebook.
+
 
 [Notebook_11]: http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/11__Entrez__building_dataset.ipynb
 [Notebook_12]: http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/12__inspecting_the_data.ipynb
 [Notebook_13]: http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/13__network_analysis.ipynb
 [Notebook_14]: http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/14__text_mining.ipynb
+[Notebook_KW]: http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/Extra__Keywords.ipynb
 
 [CI_book]: http://shop.oreilly.com/product/9780596529321.do
