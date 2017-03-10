@@ -26,7 +26,18 @@ The links below visualize the the IPython Notebooks contained in this folder thr
 4. [Text mining][Notebook_14]
 
 An extra dataset, containing papers' keywords, was also provided, as a form of ground truth of paper categorization.
-It's construction used the code in the [Extra__Keywords][Notebook_KW] notebook.
+Its construction used the code in the [Extra__Keywords][Notebook_KW] notebook.
+
+
+### Follow-ups ###
+
+The VU Amsterdam's [Information Retrieval][VUIR] course has since 2014 provided exercises derived from these notebooks.
+
+See the repositories for:
+
+* [2014/2015][IR1415] (by [Paul Groth][pgroth], with assignments by J.E. Hoeksema)
+* [2015/2016][IR1516], [2016/2017][IR1617] (by [Tobias Kuhn][tkuhn]) &ndash; Converted to the latest Jupyter version and Python 3
+
 
 
 [Notebook_11]: http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/11__Entrez__building_dataset.ipynb
@@ -36,3 +47,10 @@ It's construction used the code in the [Extra__Keywords][Notebook_KW] notebook.
 [Notebook_KW]: http://nbviewer.ipython.org/urls/raw.github.com/lfsimoes/VU/master/2013__Collective_Intelligence/Extra__Keywords.ipynb
 
 [CI_book]: http://shop.oreilly.com/product/9780596529321.do
+
+[VUIR]: https://github.com/VUInformationRetrieval
+[IR1415]: https://github.com/VUInformationRetrieval/IR2014_2015
+[IR1516]: https://github.com/VUInformationRetrieval/IR2015_2016
+[IR1617]: https://github.com/VUInformationRetrieval/IR2016_2017
+[pgroth]: https://github.com/pgroth
+[tkuhn]: https://github.com/tkuhn
