@@ -36,7 +36,7 @@ The VU Amsterdam's [Information Retrieval][VUIR] course has since 2014 provided 
 See the repositories for:
 
 * [2014/2015][IR1415] (by [Paul Groth][pgroth], with assignments by J.E. Hoeksema)
-* [2015/2016][IR1516], [2016/2017][IR1617] (by [Tobias Kuhn][tkuhn]) &ndash; Converted to the latest Jupyter version and Python 3
+* [2015/2016][IR1516], [2016/2017][IR1617], [fall 2017][IR1718], [fall 2018][IRf18] (by [Tobias Kuhn][tkuhn]) &ndash; Converted to the latest Jupyter version and Python 3
 
 
 
@@ -52,5 +52,7 @@ See the repositories for:
 [IR1415]: https://github.com/VUInformationRetrieval/IR2014_2015
 [IR1516]: https://github.com/VUInformationRetrieval/IR2015_2016
 [IR1617]: https://github.com/VUInformationRetrieval/IR2016_2017
+[IR1718]: https://github.com/VUInformationRetrieval/IR2017_2018
+[IRf18]: https://github.com/VUInformationRetrieval/IR2018
 [pgroth]: https://github.com/pgroth
 [tkuhn]: https://github.com/tkuhn
